@@ -1,0 +1,167 @@
+#register_div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+}
+
+#formdiv{
+    height: 40vh;
+    width: 100%;
+    border-radius: 2rem;
+    display: flex;
+    justify-content: center;
+}
+#form_login{
+    display: none;
+}
+.formContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    position: relative;
+}
+#leftform{
+    position: relative;
+    width: 35%;
+    height: 80%;
+    background-color: #5c9cf6;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#svg1{
+    position: absolute;
+    top: -30%;
+    right: -30%;
+    width: 20rem;
+}
+#svg2{
+    position: absolute;
+    bottom: -30%;
+    left: -30%;
+    width: 20rem;
+}
+#leftform p {
+    color: white;
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    z-index: 9;
+}
+#rightform{
+    width: 100%;
+    height: 85%;
+}
+.form{
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-evenly;
+    flex-direction: column;
+    font-size: 1.4rem;
+}
+.form input, .form div button {
+    font-size: 1.2rem;
+    padding: 5px;
+    outline: none;
+    border-radius: 0.3rem;
+    border: 1.4px solid black;
+}
+.form div{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form div button{
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1000px #3F37C9;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 10px;
+
+}
+#registerBtn{
+    box-shadow: inset 0 0 0 1000px #5c9cf6;
+    color: white;
+}
+.btn{
+    background-color: transparent;
+    border: none;
+    cursor: pointer; 
+    font-size: 1.5rem;
+    padding: 0.7rem;
+    border-radius: 9px;
+}
+#userlogout{
+    visibility: visible;
+    opacity: 1;
+}
+#borderBtn{
+    margin-bottom: 2rem;
+    color: white;
+}
+#alertUser{
+    background-color: rgb(245, 169, 169);
+    width: 50%;
+    text-align: center;
+    position: absolute;
+    /* margin-top: 20px; */
+    top: 3%;
+    right: 10%;
+    font-size: 1.2rem;
+    
+}
+#crossBtn{
+    background-color: black;
+    color: white;
+    padding: 2px;
+    border-radius: 5px;
+    border: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: none;
+}
+#form_register input{
+    padding: 0.7rem 1.25rem;
+    font-weight: 400;
+    font-size: 1rem;
+    background-clip: padding-box;
+    border: 1px solid #e7eaf0;
+    box-shadow: 0px 1px 2px rgba(50,50,71,.08);
+
+}
+#form_register input:focus{
+    border: 1px solid #5c9cf6;
+}
+#form_login input:focus{
+    border: 1px solid #5c9cf6;
+}
+
+#registerSubmit{
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1000px #3F37C9;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+.form input{
+    padding: 0.7rem 1.25rem;
+    font-weight: 400;
+    font-size: 1rem;
+    background-clip: padding-box;
+    border: 1px solid #e7eaf0;
+    box-shadow: 0px 1px 2px rgba(50,50,71,.08);
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/poll.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/notes.css">
+    <link rel="stylesheet" href="/css/userProfile.css">
+    <title>404</title>
+</head>
+<body>
+
+    {{>navbar}}
+
+
+    <div id="notFoundContainer">
+        <div class="leftNotFound">
+            <div id="notFoundText">
+                <h2>404</h2>
+                <h2>ERROR</h2>
+
+            </div>
+            <span>
+                Oops ! Page Not Found
+            </span>
+            <a href="/">
+                <button type="button" id="goToHome">
+                    Go To Homepage
+                </button>
+            </a>
+
+        </div>
+
+        
+        <div class="rightNotFound">
+
+            <img src="/img/404.png" alt="404" id="notFoundImg">
+        </div>
+
+    </div>
+
+    {{>footer}}
+</body>
+</html>

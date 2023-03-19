@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/notes.css">
+    <link rel="stylesheet" href="/css/userProfile.css">
+    <title>Dashboard</title>
+</head>
+<body>
+
+
+    {{>navbar}}
+
+    <div id="container">
+
+    
+    {{#each data}}
+        {{!-- {{#each trips}} --}}
+
+            {{!-- <a href="/mytrips/{{this}}"> --}}
+                <div class="tripData">
+                    
+                <a href="/mytrips/{{this}}">
+                    
+                    <span>{{this}}</span>
+                </a>
+                    
+                        <button type="button" onclick='updateTrip("{{this}}")' class="updateBtn update">
+                           <img src="/img/update.png" alt="Update" style="filter: invert(1);">
+                        </button>
+
+                        <button type="button" onclick='deleteTrip("{{this}}")' class="deleteBtn update">
+                            <img src="/img/delete.png" alt="Update">
+
+                        </button>
+                    {{#each ../saathiArr}}
+                        {{#when tripname 'eq' ../this}}
+                            <div class="members">
+
+                                {{#each saathi}}
+                                    <span>{{this}}</span>
+                                {{/each}}
+
+                            </div>
+                        {{/when}}
+                    {{/each}}
+                </div>
+            {{!-- </a> --}}
+            
+        {{!-- {{/each}} --}}
+    {{/each}}
+
+
+
+    {{!-- <div class="tripData"> --}}
+        <button id="createTripBtn"> <span>+</span> &nbsp; Create a Trip</button>
+    {{!-- </div> --}}
+    <section id="notedivmodal" class="hidden">
+                <form action="/user_dashboard" id="modal_form" method="post" class="fomr">
+                    <span>Name of trip  &nbsp; <input type="text" name="nameTrip" id="title_modal" required>    </span>
+                    {{!-- <span>Add Members &nbsp; <input type="text" name="updatenote" id="note_modal"></span> --}}
+                    <span class="friendSelect">
+                        <label for="userSelect">Select your friends : </label>
+                        <select name="userSelect" id="userSelect" multiselect-search="true" multiselect-select-all="true" multiselect-max-items="10" multiple style="width:100%;">
+                            {{#each allusers}}
+                                <option value={{username}}>{{username}}</option>
+                            {{/each}}
+                        </select>
+                    </span>
+                         <button type="submit" id="friendSubmit">Submit</button>
+
+                </form>
+                
+                     <button id="closemodal">X</button>
+        </section>
+        <div class="overlay hidden"></div>
+
+    </div>
+
+
+    {{>footer}}
+
+</body>
+<script>
+
+
+    const createTripBtn = document.getElementById("createTripBtn");
+    const noteDivModal = document.getElementById("notedivmodal");
+    const closemodal = document.getElementById("closemodal");
+    const overlay = document.querySelector(".overlay");
+
+    createTripBtn.addEventListener("click",() => {
+        noteDivModal.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+        const modal_form = document.getElementById("modal_form");
+        modal_form.action = `/user_dashboard`
+        const title_modal = document.getElementById("title_modal")
+        title_modal.value = "";
+
+    })
+    closemodal.addEventListener("click",() => {
+        noteDivModal.classList.add("hidden");
+        overlay.classList.add("hidden");
+        const userSelect = document.getElementById("userSelect")
+        userSelect.selectedIndex = -1;
+
+
+    })
+
+
+    function updateTrip(tripTitle){
+        const modal_form = document.getElementById("modal_form");
+        modal_form.action = `/update/${tripTitle}`
+        const title_modal = document.getElementById("title_modal")
+        title_modal.value = `${tripTitle}`;
+        noteDivModal.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+    }
+
+    function deleteTrip(tripTitle){
+        const modal_form = document.getElementById("modal_form");
+        modal_form.action = `/delete/${tripTitle}`;
+        modal_form.submit()
+    }
+    
+</script>
+
+<script src="js/multiselect-dropdown.js"></script>
+
+
+</html>

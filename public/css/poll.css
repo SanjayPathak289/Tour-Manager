@@ -1,0 +1,105 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+#pollContainer{
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin-top: 2rem;
+}
+.pollDiv{
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    border: 2px solid black;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #a2d2ff;
+    color: #03045e;
+    border: none;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    position: relative;
+    text-align: center;
+}
+.pollDiv > span{
+    font-size: 2rem;
+    font-weight: 900;
+    word-spacing: 3px;
+}
+.optionDiv{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    margin-top: 5px;
+}
+.optionDiv  span {
+    width: 100%;
+    /* border: 2px solid black; */
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.06);
+    margin-top: 10px;
+    border-radius: 5px;
+   
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+}
+.optionDiv span + p{
+    font-size: 4rem;
+}
+
+.optionDiv span label{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 15px;
+
+}
+.optionDiv span input[type = "radio"]{
+    cursor: pointer;
+}
+
+/* .optionDiv > span > p{
+    margin-left: 15px;
+} */
+
+#inputToolTip{
+    position: relative;
+    margin-left: 2rem;
+    /* width: 100%; */
+    margin-bottom: 1rem;
+    margin-right: auto;
+    cursor: pointer;
+    align-items: center;
+}
+#inputToolTip img{
+    width: 1.35rem;
+    height: 1.35rem;
+}
+#inputToolTip::before{
+    content: "You can vote in poll only first time";
+    width: 1115%;
+    background-color: black;
+    color: white;
+    padding: 5px;
+    border-radius: 6px;
+    font-size: 1rem;
+    position: absolute;
+    /* top: -3rem; */
+    left: 2rem;
+    /* display: none; */
+    opacity:0;
+    transition: .3s opacity;
+
+}
+#inputToolTip:hover::before{
+    display: flex;
+    opacity: 1;
+    /* animation: fade 1s 1 linear; */
+}

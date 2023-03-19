@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">  
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/poll.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/notes.css">
+    <link rel="stylesheet" href="/css/userProfile.css">
+
+    <title>Polls</title>
+</head>
+<body>
+    {{>navbar}}
+
+    <div id="pollContainer">
+ {{#each polldata}}
+                <div class="pollDiv">
+                    <span>{{title}} &nbsp;</span>
+                    {{!-- <button type="button" onclick='updatePoll("{{title}}","{{tripname}}")' class="updateTrip">
+                        Update
+                    </button> --}}
+                    <button type="button" onclick='deletePoll("{{title}}","{{tripname}}")' class="updateTrip deleteBtn update">
+                        <img src="/img/delete.png" alt="Update">
+
+                    </button>
+                    {{!-- <span><a href="/optionUpdate">Update</a></span> --}}
+                    <div class="optionDiv">
+
+                        <form method="post" class="optionDiv" id="{{title}}">
+                        {{#each options}}
+                            <span> 
+                                <label for="{{@index}}">
+                                <p>{{name}}</p>
+                                
+                                {{#each ../../submit}}
+                                            {{#when @index 'eq' @../../index }}
+
+                                                {{!-- {{#if this }} --}}
+
+                                                {{#when this 'eq' true}}
+                                                    
+                                                    <input type="radio" class="{{../../title}}" name="{{../../title}}" value="{{@../index}}" id="{{@../index}}" onclick='optionClick("{{../../tripname}}","{{../../title}}","{{@../index}}")'>
+                                                {{/when}}
+                                                {{#when this 'noteq' true}}
+                                                    <input type="radio" class="{{../../title}}" name=" {{../../title}}" value="{{@../index}}" onclick='optionClick("{{../../tripname}}","{{../../title}}","{{@../index}}")' disabled>
+                                                {{/when}}        
+                                                {{!-- {{else}} --}}
+                                                    {{!-- <input type="radio" class="{{../title}}" name=" {{../title}}" value="{{@index}}" onclick='optionClick("{{../tripname}}","{{../title}}","{{@index}}")' disabled> --}}
+                                                {{!-- {{/if}} --}}
+
+
+                                            {{/when}}  
+                        
+                                   
+
+
+                                {{/each}}
+                                    
+                                <p>{{weight}}</p> 
+                                </label>
+                            </span>
+                            
+                        {{/each}}
+                                <input type="hidden" name="tripname" value="{{tripname}}" />
+                                <input type="hidden" name="title" value="{{title}}" />                                  
+
+                        </form>
+                    </div>
+                </div>
+        {{/each}}
+
+        {{#if duration}}
+
+            <div id="userSetDates" style="height: 20rem;">
+                <span style="font-size: 2rem;font-weight: 900;letter-spacing: 1.7px;">Title : {{duration.[0]}}</span>
+                <span>From : {{duration.[1]}}</span>
+                <span>To : {{duration.[2]}}</span>
+            </div>
+        {{/if}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <button id="addQ">
+            <span>+</span> &nbsp;
+            Add A Poll
+        </button> 
+        
+        <a href="/{{trip}}/screen">
+            <div id="screenGen">
+                <span>+</span> &nbsp;
+                Generate Itinerary Screen
+            </div>
+        </a>
+    </div>
+
+
+
+
+    
+    <section id="notedivmodal" class="hidden" style="width:40%;height:65%">
+                <form action="/mytrips/{{trip}}" id="modal_form" method="post" style="width: 50%;align-items:center">
+                    <span id="inputToolTip"><img id="tooltipImg" src="/img/tooltip.png" alt="i"></span> 
+                    <span> Title  &nbsp; <input type="text" name="questionTitle" id="title_modal" required>   </span>
+                    <span id="dateDiv"> 
+                        <button id="setDate" type="button" onclick="showDate()">Want to add dates</button>
+                        <div id="fromtodiv">
+                           <span> From Date : <input type="date" name="fromDate" id="fromDate"></span>
+                           <span> To Date : <input type="date" name="toDate" id="toDate"> </span>
+                        </div>
+                        <button type="button" id="addOptions" onclick="option()">Add Options</button>
+                    </span>
+                    <div  id="optionDiv">
+
+                    </div>
+                    <div id="modalSubmit">
+                        <button type="submit">Submit</button>
+
+                    </div>
+                </form>
+                
+                     <button id="closemodal">X</button>
+        </section>
+        <div class="overlay hidden"></div>
+
+
+
+        {{>footer}}
+</body>
+
+<script>
+    const addQ = document.getElementById("addQ");
+    const noteDivModal = document.getElementById("notedivmodal");
+    const closemodal = document.getElementById("closemodal");
+    const overlay = document.querySelector(".overlay");
+    const addOptions = document.getElementById("addOptions");
+    const modal_form = document.getElementById("modal_form")
+    const optionDiv = document.getElementById("optionDiv");
+    const dateDiv = document.getElementById("dateDiv");
+    const setDate = document.getElementById("setDate");
+    const fromtodiv = document.getElementById("fromtodiv");
+
+    var i = 1;
+
+    addQ.addEventListener("click",() => {
+        noteDivModal.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+    })
+    closemodal.addEventListener("click",() => {
+        noteDivModal.classList.add("hidden");
+        overlay.classList.add("hidden");
+        optionDiv.innerHTML = "";
+        i = 1;
+        setDate.style.display = "inline-block";
+        addOptions.style.display = "flex";
+        fromtodiv.style.display = 'none';
+    })
+
+   
+   function option(){
+        var optionInput = document.createElement("input");
+        optionInput.type = "text";
+        optionInput.name = "optionInput";
+        optionInput.placeholder = "Option " + i;
+        optionInput.style.marginTop = "3px";
+        optionInput.required = true;
+        optionDiv.appendChild(optionInput);
+
+        i++;
+
+    }
+
+    function showDate(){
+        optionDiv.innerHTML = ""
+        setDate.style.display = "none";
+        addOptions.style.display = "none";
+      fromtodiv.style.display = 'flex';
+    }
+
+
+
+    var data;
+    async function optionClick(tripname, title, index){
+
+        const dataform = document.getElementById(title);
+        dataform.action = `/mytrips/update/${tripname}`;
+        //dataform.onsubmit = "return false";
+        dataform.submit();
+        var opt = document.getElementsByClassName(title)
+        for(var i = 0; i < opt.length ; i++){
+            opt[i].disabled = true;
+        }
+     //   const res = await fetch(`/mytrips/update/${tripname}`, {
+     //       method : "POST",
+     //       body : JSON.stringify({
+     //           tripname,
+     //           title,
+     //           index
+     //       }),
+     //       headers: {
+     //               "Content-type": "application/json; charset=UTF-8"
+     //       }
+     //   })
+     //   data = await res.json();
+    }
+
+    //function updatePoll(pollTitle,tripName){
+    //    const modal_form = document.getElementById("modal_form");
+    //    modal_form.action = `/update/poll/${tripName}/${pollTitle}`
+    //    const title_modal = document.getElementById("title_modal")
+    //    title_modal.value = `${pollTitle}`;
+    //    noteDivModal.classList.remove("hidden");
+    //    overlay.classList.remove("hidden");
+    //}
+
+    function deletePoll(pollTitle,tripName){
+        const modal_form = document.getElementById("modal_form");
+        modal_form.action = `/delete/poll/${tripName}/${pollTitle}`;
+        modal_form.submit()
+    }
+    
+
+</script>
+</html>

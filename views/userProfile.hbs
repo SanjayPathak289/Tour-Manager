@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/poll.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/notes.css">
+    <link rel="stylesheet" href="/css/userProfile.css">
+    <title>{{data.username}} Profile</title>
+</head>
+<body>
+
+    {{>navbar}}
+    <div id="userData">
+
+        <div id="photoView">
+            <img src="uploads/{{data.image}}" alt="User-Photo" class="showimg">
+
+        </div>
+
+        <div id="userchange">
+            <span style="font-weight:400">
+                Username &nbsp; {{data.username}}
+            </span>
+            <button type="button" id="changephotBtn" onclick='setProfilePhoto("{{data.username}}","{{data.image}}")'>
+                Change Profile Photo
+            </button>
+
+        </div>
+    </div>
+
+
+    <section id="notedivmodal" class="hidden" style="width:40%;height:30%">
+                <form id="modal_form" method="post" enctype="multipart/form-data">
+                    {{!-- <span>Task  &nbsp; <input type="text" name="questionTitle" id="title_modal"> </span> --}}
+                    {{!-- <button type="button" id="addOptions" onclick="option()">Add Tasks</button> --}}
+                    <input type="file" name="file" accept="image/*">
+                    <div id="modalSubmit">
+                        <button type="submit">Submit</button>
+
+                    </div>
+                </form>
+                
+                    <button id="closemodal">X</button>
+        </section>
+        <div class="overlay hidden"></div>
+
+
+
+
+    {{>footer}}
+</body>
+
+
+<script>
+
+    const noteDivModal = document.getElementById("notedivmodal");
+    const closemodal = document.getElementById("closemodal");
+    const overlay = document.querySelector(".overlay");
+    const modal_form = document.getElementById("modal_form");
+
+
+    closemodal.addEventListener("click",() => {
+            noteDivModal.classList.add("hidden");
+            overlay.classList.add("hidden");
+        })
+
+    function setProfilePhoto(name,image){
+        modal_form.action = `/${image}/${name}`;
+        noteDivModal.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+       // const nameSpan = document.getElementById("nameSpan");
+       // nameSpan.parentNode.removeChild(nameSpan);
+       // const fileInput = document.createElement("input")
+       // fileInput.type = "file";
+       // fileInput.name = "file";
+       // modal_form.enctype = "multipart/form-data";
+       // modal_form.insertBefore(fileInput,modal_form.firstChild);
+    }
+
+</script>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/poll.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/notes.css">
+    <link rel="stylesheet" href="/css/userProfile.css">
+    <title>Screen</title>
+</head>
+<body>
+
+    
+    {{>navbar}}
+    <div id="screenContainer">
+    
+
+    <a href="/responsibility/{{tripname}}"  id="respBtn">
+        <button type="button">
+            Responsibility
+
+        </button>
+    
+    </a>
+
+    <div id="finalOptionsDiv">
+
+{{#if data}}
+    {{#each data}}
+        <div class="option">
+            <div class="titleDiv">
+                <span>Title - {{title}}</span>
+
+            </div>
+            <div class="answerDiv">
+                <span>Name - {{name}}</span>
+                <span>Votes - {{weight}}</span>
+
+            </div>
+        </div>
+
+    {{/each}}
+{{/if}}
+
+    {{#if  screenDate.[1]}}
+        {{#when screenDate.[1] 'noteq' "Invalid Date"}}
+
+            <div id="screenDates" class="option">
+                <div class="titleDiv">
+                <span id="dateTitle">Title : {{screenDate.[0]}}</span>
+
+                </div>
+                <div class="answerDiv">
+                <span>From : {{screenDate.[1]}}</span>
+                <span>To : {{screenDate.[2]}}</span>
+
+                </div>
+            </div>
+        {{/when}}
+    {{/if}}
+
+
+    </div>
+
+    <div id="scheduleDiv">
+        {{#each scheduleArr}}
+            <div class="eachDay">
+                <span>#Day{{day}}</span>
+                <span>Date : {{date}}</span>
+
+                {{#when task 'noteq' [] }}
+                    {{#each task}}
+                    <hr style="width:85%;margin-left:auto;margin-right:auto;">
+                    <div class="taskDiv">
+                        <button type="button" onclick='updateTask("{{../../tripname}}","{{../day}}","{{this}}",{{@index}})' class="updateTrip update">
+                        <img src="/img/update.png" alt="Update">
+                    </button>
+                       <span> Task : {{this}} </span>
+
+                    <button type="button" onclick='deleteTask("{{../../tripname}}","{{../day}}","{{this}}")' class="updateTrip update">
+                        <img src="/img/delete.png" alt="Update">
+                    </button>
+                    </div>
+
+                    {{!-- <div id="updateAndDelete"> --}}
+                        {{!-- <button type="button" onclick='updateTask("{{../../tripname}}","{{../day}}","{{this}}",{{@index}})' class="updateTrip">
+                        Update
+                    </button>
+                    <button type="button" onclick='deleteTask("{{../../tripname}}","{{../day}}","{{this}}")' class="updateTrip">
+                        Delete
+                    </button> --}}
+                    {{!-- </div> --}}
+
+                    {{/each}}
+                {{/when}}
+
+                
+                
+                <button type="button" class="addTaskBtn" onclick="setday('{{../tripname}}','{{day}}')">Add Task</button>
+            </div>
+            
+        {{/each}}
+
+
+    <section id="notedivmodal" class="hidden" style="width:40%;height:30%">
+                <form id="modal_form" method="post">
+                    {{!-- <span>Task  &nbsp; <input type="text" name="questionTitle" id="title_modal"> </span> --}}
+                    {{!-- <button type="button" id="addOptions" onclick="option()">Add Tasks</button> --}}
+
+                    <span>
+                        <input type="text" name="taskInput" placeholder="Task Name" id="taskInput" required>
+                    </span>
+                    {{!-- <span>
+                        Assigned To : <select name="userSelect" id="userSelect" multiselect-search="true" multiselect-select-all="true" multiselect-max-items="10" multiple style="width:100%;">
+                            {{#each allusers}}
+                                <option value={{username}}>{{username}}</option>
+                            {{/each}}
+                        </select>
+                    </span> --}}
+                    <div id="modalSubmit">
+                        <button type="submit">Submit</button>
+
+                    </div>
+                </form>
+                
+                    <button id="closemodal">X</button>
+        </section>
+        <div class="overlay hidden"></div>
+
+
+
+
+    </div>
+
+    </div>
+    <div style="margin-top: auto;">
+    {{>footer}}
+    </div>
+    <script>
+
+        const addTaskBtn = document.getElementsByClassName("addTaskBtn")
+        const noteDivModal = document.getElementById("notedivmodal");
+        const closemodal = document.getElementById("closemodal");
+        const overlay = document.querySelector(".overlay");
+        const addOptions = document.getElementById("addOptions");
+        const modal_form = document.getElementById("modal_form")
+
+        for(let i = 0; i < addTaskBtn.length;i++){
+            addTaskBtn[i].addEventListener("click", () => {
+                noteDivModal.classList.remove("hidden");
+                overlay.classList.remove("hidden");
+                
+            })
+        }
+        function setday(tripname,day){
+            modal_form.action = `/${tripname}/update/${day}/screen`;
+        }
+        //function option(){
+        //    var optionInput = document.createElement("input");
+        //    optionInput.type = "text";
+        //    optionInput.name = "optionInput";
+        //    optionInput.placeholder = "Task " + i;
+        //    optionInput.style.marginTop = "3px";
+        //    optionDiv.appendChild(optionInput);
+        //    i++;
+        //}
+
+        closemodal.addEventListener("click",() => {
+            noteDivModal.classList.add("hidden");
+            overlay.classList.add("hidden");
+            const taskInput = document.getElementById("taskInput");
+            taskInput.value = "";
+        })
+
+        function updateTask(tripTitle,day,task,index){
+            const modal_form = document.getElementById("modal_form");
+            modal_form.action = `/updateTask/${tripTitle}/${day}/${task}/${index}`;
+            const taskInput = document.getElementById("taskInput")
+            taskInput.value = `${task}`;
+            noteDivModal.classList.remove("hidden");
+            overlay.classList.remove("hidden");
+
+        }
+
+        function deleteTask(tripTitle,day,task){
+            const modal_form = document.getElementById("modal_form");
+            modal_form.action = `/deleteTask/${tripTitle}/${day}/${task}`;
+            modal_form.submit()
+        }
+
+
+
+
+
+    </script>
+<script src="/js/multiselect-dropdown.js"></script>
+
+
+</body>
+</html>

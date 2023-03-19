@@ -1,0 +1,38 @@
+<nav>
+        <div id="brandname">
+           <a href="/">IMG</a>
+        </div>
+
+        <div id="userDiv">
+           {{!-- <button type="button" id="hamburger">
+                <span>-</span>
+                <span>-</span>
+                <span>-</span>
+           </button> --}}
+
+            <div id="login">
+            {{#if user}}
+                <button id="usera"> <a href="/{{user}}">{{user}}</a></button>
+                    <span class="userbtn">
+                        <a href="/">Home</a>
+                        <a href="/user_dashboard">Dashboard</a>
+                        <a href="/{{user}}">Profile</a>
+                        <a href="/logout" style="text-decoration: none;" id="userlogout">Logout</a>
+                    </span>
+            {{else}}
+                <a href="/register" style="text-decoration: none;">Register / Login</a>
+            {{/if}}
+
+        </div>
+        {{#if user}}
+
+            <div id="userPhoto">
+                <a href="/{{user}}"><img src="/uploads/{{src}}" alt="User" class="userProfilePhoto"></a>
+
+            </div>
+        {{/if}}
+
+        </div>
+        
+
+    </nav>

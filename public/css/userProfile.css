@@ -1,0 +1,58 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    display: flex;
+    flex-direction: column;
+}
+#userData{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    height: 70%;
+}
+
+.userProfilePhoto{
+    width: 75px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.showimg{
+    width: 150px;
+    border-radius: 50%;
+}
+#userchange{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+    margin-left: 7rem;
+    width: 40%;
+    height: 40%;
+    /* background-color: #03045e; */
+    background-color: #4895ef;
+    color: white;
+    border-radius: 10px;
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; */
+    font-size: 1.9rem;
+    word-spacing: 3px; 
+}
+input::file-selector-button , #changephotBtn{
+    padding: 0.7rem;
+    border: none;
+    border-radius: 10px;
+    /* background-color: #5c9cf6; */
+    background-color: #03045e;
+    font-size: 1.4rem;
+    color: white;
+    cursor: pointer;
+}
+input::file-selector-button{
+    background-color: #5c9cf6 !important;
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/poll.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/notes.css">
+    <link rel="stylesheet" href="/css/userProfile.css">
+    <title>Responsibility</title>
+</head>
+<body>
+    {{> navbar}}
+
+    {{!-- <div id="respData"> --}}
+        <div id="resp">
+
+                {{#each respData}}
+
+                        {{#if respo}}
+                            <div class="userResp">
+                                <div class="respTitle">
+                                  <span style="font-weight: 500;">Responsibility : {{respo}}</span>
+                                  <button type="button" onclick='updateResp("{{../tripname}}","{{respo}}","{{@index}}")' class="updateTrip updateBtn update">
+                                        <img src="/img/update.png" alt="Update">
+                                    </button>
+                                    <button type="button" onclick='deleteResp("{{../tripname}}","{{respo}}","{{@index}}")' class="updateTrip deleteBtn update">
+                                        <img src="/img/delete.png" alt="Update">
+                                    </button>
+                                </div>
+                                <div class="respMembers">
+                                    {{#each user}}
+                                        <span>{{this}}</span>
+                                    {{/each}}
+
+                                </div>
+
+                            </div>
+                        {{/if}}
+
+
+                {{/each}}
+
+        </div>
+
+    {{!-- </div> --}}
+        <button type="button" onclick="addUserResp()" id="addRespMembers">
+            <span>+</span> &nbsp;
+            Add
+        </button>
+
+
+    <section id="notedivmodal" class="hidden" style="width:40%;height:65%">
+                <form action="/responsibility/{{tripname}}" id="modal_form" method="post" style="width: 80%;">
+
+                    <span>
+                        <input type="text" name="respInput" placeholder=" Add Responsibility" id="respInput">
+                    </span>
+                    <span  style="width: 70%;">
+                        Assigned To : <select name="userSelect" id="userSelect" multiselect-search="true" multiselect-select-all="true" multiselect-max-items="10" multiple style="width:100%;">
+                            {{#each allusers}}
+                                <option value={{username}}>{{username}}</option>
+                            {{/each}}
+                        </select>
+                    </span>
+                    <div id="modalSubmit" style="margin-top: 2rem;">
+                        <button type="submit">Submit</button>
+
+                    </div>
+                </form>
+                
+                    <button id="closemodal">X</button>
+        </section>
+        <div class="overlay hidden"></div>
+
+
+    {{>footer}}
+</body>
+
+
+
+<script>
+        const noteDivModal = document.getElementById("notedivmodal");
+        const closemodal = document.getElementById("closemodal");
+        const overlay = document.querySelector(".overlay");
+
+    function addUserResp(){
+        const modal_form = document.getElementById("modal_form");
+        modal_form.action = `/responsibility/{{tripname}}`;
+        noteDivModal.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+        const respInput = document.getElementById("respInput")
+        respInput.value = "";
+    }
+
+    closemodal.addEventListener("click",() => {
+        noteDivModal.classList.add("hidden");
+        overlay.classList.add("hidden");
+        const respInput = document.getElementById("respInput");
+        respInput.value = "";
+        const userSelect = document.getElementById("userSelect")
+        userSelect.selectedIndex = -1;
+
+            
+    })
+
+    function updateResp(trip,respo,index){
+        const modal_form = document.getElementById("modal_form");
+        modal_form.action = `/responsibility/${trip}/${respo}/${index}`;
+        const respInput = document.getElementById("respInput")
+        respInput.value = `${respo}`;
+        noteDivModal.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+    }
+
+
+    function deleteResp(trip,respo,index){
+        const modal_form = document.getElementById("modal_form");
+        modal_form.action = `/responsibility/delete/${trip}/${respo}/${index}`
+        modal_form.submit();
+    }
+
+
+
+
+</script>
+<script src="/js/multiselect-dropdown.js"></script>
+</html>
