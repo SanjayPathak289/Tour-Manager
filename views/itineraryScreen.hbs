@@ -45,7 +45,6 @@
 {{/if}}
 
     {{#if  screenDate.[1]}}
-        {{#when screenDate.[1] 'noteq' "Invalid Date"}}
 
             <div id="screenDates" class="option">
                 <div class="titleDiv">
@@ -58,7 +57,6 @@
 
                 </div>
             </div>
-        {{/when}}
     {{/if}}
 
 
@@ -84,14 +82,6 @@
                     </button>
                     </div>
 
-                    {{!-- <div id="updateAndDelete"> --}}
-                        {{!-- <button type="button" onclick='updateTask("{{../../tripname}}","{{../day}}","{{this}}",{{@index}})' class="updateTrip">
-                        Update
-                    </button>
-                    <button type="button" onclick='deleteTask("{{../../tripname}}","{{../day}}","{{this}}")' class="updateTrip">
-                        Delete
-                    </button> --}}
-                    {{!-- </div> --}}
 
                     {{/each}}
                 {{/when}}
@@ -106,19 +96,10 @@
 
     <section id="notedivmodal" class="hidden" style="width:40%;height:30%">
                 <form id="modal_form" method="post">
-                    {{!-- <span>Task  &nbsp; <input type="text" name="questionTitle" id="title_modal"> </span> --}}
-                    {{!-- <button type="button" id="addOptions" onclick="option()">Add Tasks</button> --}}
 
                     <span>
                         <input type="text" name="taskInput" placeholder="Task Name" id="taskInput" required>
                     </span>
-                    {{!-- <span>
-                        Assigned To : <select name="userSelect" id="userSelect" multiselect-search="true" multiselect-select-all="true" multiselect-max-items="10" multiple style="width:100%;">
-                            {{#each allusers}}
-                                <option value={{username}}>{{username}}</option>
-                            {{/each}}
-                        </select>
-                    </span> --}}
                     <div id="modalSubmit">
                         <button type="submit">Submit</button>
 

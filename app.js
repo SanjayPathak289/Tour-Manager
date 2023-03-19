@@ -733,10 +733,8 @@ app.get("/:trip/screen",auth,async (req,res) => {
     const screenData = await UserCred.find({
         "polls.tripname" : req.params.trip 
     }).select({polls:1})
-    console.log(JSON.stringify(screenData));
     
 
-    if (screenData.length > 0) {
      
         const dateData = await UserCred.find({
             'trips.name' : req.params.trip
@@ -770,17 +768,6 @@ app.get("/:trip/screen",auth,async (req,res) => {
                 })
     
     
-        
-            // }
-            // else{
-            //     scheduleArr.push({
-            //         trip : req.params.trip,
-            //         day : i,
-            //         date : nextDay.toDateString(),
-            //     })
-    
-            // }
-    
     
     
             nextDay.setDate(nextDay.getDate() + 1);
@@ -790,7 +777,6 @@ app.get("/:trip/screen",auth,async (req,res) => {
         
     
     
-        // scheduleArr.push()
     
         await UserCred.updateOne(
             {'trips.name' : req.params.trip},
@@ -808,6 +794,8 @@ app.get("/:trip/screen",auth,async (req,res) => {
         } 
         
         var screenObj = []
+    if (screenData.length > 0) {
+
         for(var ele of screenData[0].polls){
             if (ele.tripname == req.params.trip) {
                 var optionTitle;
@@ -841,12 +829,10 @@ app.get("/:trip/screen",auth,async (req,res) => {
         // const scheduleArr = await UserCred.find({
     
         // })
-        console.log(JSON.stringify(screenObj));
         res.render("itineraryScreen",{
             data : screenObj,
             screenDate : screenDate,
             scheduleArr : scheduleArr,
-            // allusers : alluserData
             tripname : req.params.trip,
             user : req.session.user,
             src : srcPhoto,
@@ -864,10 +850,8 @@ app.get("/:trip/screen",auth,async (req,res) => {
     }
     else{
         res.render("itineraryScreen",{
-            // data : screenObj,
             screenDate : screenDate,
             scheduleArr : scheduleArr,
-            // allusers : alluserData
             tripname : req.params.trip,
             user : req.session.user,
             src : srcPhoto,
