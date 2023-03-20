@@ -173,7 +173,7 @@ app.post("/login", async (req,res) => {
                 httpOnly : true,
             });
             req.session.user = userName;
-            const showImgData = await UserCred.findOne({username : req.session.user})
+            const showImgData = await UserCred.findOne({username : userName})
             srcPhoto = showImgData.image;
             res.redirect('/');
         }
