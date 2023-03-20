@@ -543,6 +543,7 @@ app.get("/:user",auth,async (req,res) => {
 
     if (req.params.user === req.session.user) {
         const loginUserData = await UserCred.findOne({username : req.params.user})
+        srcPhoto = loginUserData.image;
             res.render("userProfile",{
             data : loginUserData,
             user : req.session.user,
@@ -568,7 +569,7 @@ app.post("/:img/:name", upload,async(req,res) => {
                 image : req.file.filename
             })
             
-
+            
         }
 
           
