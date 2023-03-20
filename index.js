@@ -112,7 +112,8 @@ app.get("/", auth ,async(req,res) => {
     // }
     else{
         res.render("index",{    
-            user : req.session.user
+            user : req.session.user,
+            src : "default.png"
         }) 
     }
     
@@ -286,13 +287,21 @@ app.get("/mytrips/:tripname",auth, async(req,res) => {
 
     const dateData = await UserCred.find({
         'trips.name' : req.params.tripname
-    }).select({'trips.$' : 1})
-    
+    }).select({'trips' : 1})
+    console.log(JSON.stringify(dateData));
+    var durationArr = [];
+
+    for(var ele of dateData[0].trips){
+        if (ele.name == req.params.tripname) {
+            durationArr = ele.duration;
+        }
+    }
+    console.log((JSON.stringify(durationArr)));
     // durationArr = durationArr.map(x => (new Date(x)).toDateString())
     // durationArr = durationArr.map(
     //     x => (new Date(x)).toDateString()
     // )
-    var durationArr = dateData[0].trips[0].duration;
+    // var durationArr = dateData[0].trips[0].duration;
     if (durationArr.length > 0) {
         durationArr[1] = new Date(durationArr[1]).toDateString();
         durationArr[2] = new Date(durationArr[2]).toDateString();
@@ -736,65 +745,73 @@ app.get("/:trip/screen",auth,async (req,res) => {
     
 
      
-        const dateData = await UserCred.find({
-            'trips.name' : req.params.trip
-        }).select({'trips.$' : 1})
-        var screenDate = [];
-        var durationArr = dateData[0].trips[0].duration;
-        if (durationArr.lenght > 0) {
-            
-        
-        const dateTitle = durationArr[0];
-        const fromDate = new Date(durationArr[1]).toDateString();
-        const toDate = new Date(durationArr[2]).toDateString();
-    
-        const noOfDays = ((new Date(durationArr[2]).getTime()) - (new Date(durationArr[1]).getTime()))/(86400000) + 1;
-    
-        const startTripDate = new Date(durationArr[1]);
-        var nextDay = new Date(startTripDate);
-    
-    
-    
-    
-        var scheduleArr = []
-        for (let i = 1; i <= noOfDays ; i++) {
-    
-            const taskArr = await UserCred.find({
-                'schedule.trip' : req.params.trip,
-                'schedule.day' : i
-            }).select({'schedule.$': 1})
-                scheduleArr.push({
-                    trip : req.params.trip,
-                    day : i,
-                    date : nextDay.toDateString(),
-                    task : (typeof taskArr[0] === 'undefined') ? [] : taskArr[0].schedule[0].task
-                })
-    
-    
-    
-    
-            nextDay.setDate(nextDay.getDate() + 1);
-            
+    const dateData = await UserCred.find({
+        'trips.name' : req.params.trip
+    }).select({'trips' : 1})
+    var durationArr = [];
+
+    for(var ele of dateData[0].trips){
+        if (ele.name == req.params.trip) {
+            durationArr = ele.duration;
         }
-    
+    }
+        var screenDate = [];
+        // var durationArr = dateData[0].trips[0].duration;
+        // console.log(JSON.stringify(durationArr));
+
+        if (durationArr.length > 0) {
         
-    
-    
-    
-        await UserCred.updateOne(
-            {'trips.name' : req.params.trip},
-            {
-                $set : {
-                    schedule : scheduleArr
-                }
+            const dateTitle = durationArr[0];
+            const fromDate = new Date(durationArr[1]).toDateString();
+            const toDate = new Date(durationArr[2]).toDateString();
+        
+            const noOfDays = ((new Date(durationArr[2]).getTime()) - (new Date(durationArr[1]).getTime()))/(86400000) + 1;
+        
+            const startTripDate = new Date(durationArr[1]);
+            var nextDay = new Date(startTripDate);
+        
+        
+        
+        
+            var scheduleArr = []
+            for (let i = 1; i <= noOfDays ; i++) {
+        
+                const taskArr = await UserCred.find({
+                    'schedule.trip' : req.params.trip,
+                    'schedule.day' : i
+                }).select({'schedule.$': 1})
+                    scheduleArr.push({
+                        trip : req.params.trip,
+                        day : i,
+                        date : nextDay.toDateString(),
+                        task : (typeof taskArr[0] === 'undefined') ? [] : taskArr[0].schedule[0].task
+                    })
+        
+        
+        
+        
+                nextDay.setDate(nextDay.getDate() + 1);
                 
             }
-        )
-    
-    
-        if(!(screenDate.length > 0)){
-            screenDate.push(dateTitle,fromDate,toDate);
-        } 
+        
+            
+        
+        
+        
+            await UserCred.updateOne(
+                {'trips.name' : req.params.trip},
+                {
+                    $set : {
+                        schedule : scheduleArr
+                    }
+                    
+                }
+            )
+        
+        
+            if(!(screenDate.length > 0)){
+                screenDate.push(dateTitle,fromDate,toDate);
+            } 
     }
         
         var screenObj = []
