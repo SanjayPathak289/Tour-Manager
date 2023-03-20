@@ -535,7 +535,7 @@ app.get("/:user",auth,async (req,res) => {
             res.render("userProfile",{
             data : loginUserData,
             user : req.session.user,
-            src : image,
+            src : loginUserData.image,
         })
     }
     else{
