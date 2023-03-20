@@ -133,6 +133,19 @@
         register.style.color = "black"
 
     }
+    if("{{success}}"){
+        crossBtn.style.display = "block"
+        alertUser.innerHTML += "{{success}}";
+        alertUser.style.padding = "20px"
+        alertUser.style.backgroundColor = "#d4edda";
+        alertUser.style.color = "#28a745"
+        form_login.style.display = "flex";
+        form_register.style.display = "none";
+        register.style.boxShadow = "none";
+        login.style.boxShadow = "inset 0 0 0 1000px rgb(92, 156, 246)";
+        login.style.color = "white"
+        register.style.color = "black"
+    }
     function hide(){
         alertUser.style.display = "none"
     }

@@ -148,7 +148,9 @@ app.post("/register", upload ,async (req,res) => {
                 await userDataifnotimg.save();
             }
             
-            res.render("register");
+            res.render("register",{
+                success : "Account Created Successfully"
+            });
         }
     }
     else{
