@@ -1,5 +1,5 @@
 const express = require("express")
-require("./db/conn")
+const db = require("./db/conn")
 const UserCred = require("./db/coll")
 const path = require("path");
 const hbs = require("hbs")
@@ -920,7 +920,9 @@ app.get('*' , auth , (req,res) => {
     })
 })
 
+db.connectDb().then(() => {
 
-app.listen(port,(req,res)=>{
-    console.log("Server Created")
+    app.listen(port,(req,res)=>{
+        console.log("Server Created")
+    })
 })
