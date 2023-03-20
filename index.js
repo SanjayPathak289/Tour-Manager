@@ -741,6 +741,9 @@ app.get("/:trip/screen",auth,async (req,res) => {
         }).select({'trips.$' : 1})
         var screenDate = [];
         var durationArr = dateData[0].trips[0].duration;
+        if (durationArr.lenght > 0) {
+            
+        
         const dateTitle = durationArr[0];
         const fromDate = new Date(durationArr[1]).toDateString();
         const toDate = new Date(durationArr[2]).toDateString();
@@ -792,6 +795,7 @@ app.get("/:trip/screen",auth,async (req,res) => {
         if(!(screenDate.length > 0)){
             screenDate.push(dateTitle,fromDate,toDate);
         } 
+    }
         
         var screenObj = []
     if (screenData.length > 0) {
