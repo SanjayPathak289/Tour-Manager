@@ -532,11 +532,11 @@ app.get("/:user",auth,async (req,res) => {
 
     if (req.params.user === req.session.user) {
         const loginUserData = await UserCred.findOne({username : req.params.user})
-        res.render("userProfile",{
-        data : loginUserData,
-        user : req.session.user,
-        src : srcPhoto,
-    })
+            res.render("userProfile",{
+            data : loginUserData,
+            user : req.session.user,
+            src : image,
+        })
     }
     else{
         res.status(404).render("404")
