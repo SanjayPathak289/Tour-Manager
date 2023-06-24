@@ -25,20 +25,20 @@ app.set("view engine", "hbs")
 // }))
 
 
-hbs.registerHelper( "when",function(operand_1, operator, operand_2, options) {
+hbs.registerHelper("when", function (operand_1, operator, operand_2, options) {
     var operators = {
-     'eq': function(l,r) { return l == r; },
-     'noteq': function(l,r) { return l != r; },
-     'gt': function(l,r) { return Number(l) > Number(r); },
-     'or': function(l,r) { return l || r; },
-     'and': function(l,r) { return l && r; },
-     '%': function(l,r) { return (l % r) === 0; }
+        'eq': function (l, r) { return l == r; },
+        'noteq': function (l, r) { return l != r; },
+        'gt': function (l, r) { return Number(l) > Number(r); },
+        'or': function (l, r) { return l || r; },
+        'and': function (l, r) { return l && r; },
+        '%': function (l, r) { return (l % r) === 0; }
     }
-    , result = operators[operator](operand_1,operand_2);
-  
+        , result = operators[operator](operand_1, operand_2);
+
     if (result) return options.fn(this);
-    else  return options.inverse(this);
-  });
+    else return options.inverse(this);
+});
 
 
 
@@ -52,21 +52,21 @@ hbs.registerHelper( "when",function(operand_1, operator, operand_2, options) {
 
 
 
-const staticPath = path.join(__dirname,"/public");
+const staticPath = path.join(__dirname, "/public");
 app.use(express.static(staticPath));
 
 var Storage = multer.diskStorage({
-    destination:"./public/uploads/",
-    filename:(req,file,cb) => {
+    destination: "./public/uploads/",
+    filename: (req, file, cb) => {
         // cb(null,file.fieldname+"_"+Date.now()+path.extname(file.originalname))
-        cb(null,file.fieldname+(req.session.user)+path.extname(file.originalname))
+        cb(null, file.fieldname + (req.session.user) + path.extname(file.originalname))
     }
 })
 
-const fileFilter = function(req, file, cb){
-    if(file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+const fileFilter = function (req, file, cb) {
+    if (file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
         cb(null, true);
-    }else{
+    } else {
         cb(null, false);
     }
 }
@@ -77,18 +77,18 @@ var upload = multer({
 }).single('file');
 
 
-const partialPath = path.join(__dirname,"/partials");
+const partialPath = path.join(__dirname, "/partials");
 hbs.registerPartials(partialPath);
 
 app.use(express.json());
-app.use(express.urlencoded({extended : false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser())
 const oneDay = 1000 * 60 * 60 * 24;
 app.use(sessions({
     secret: "thisismysecrctekeysanjay",
-    saveUninitialized:true,
+    saveUninitialized: true,
     cookie: { maxAge: oneDay },
-    resave: false 
+    resave: false
 }));
 
 
@@ -98,138 +98,138 @@ app.use(sessions({
 
 
 var srcPhoto;
-app.get("/", auth ,async(req,res) => {
+app.get("/", auth, async (req, res) => {
     // if (!(typeof req.session.user == "undefined")) {
-        if (srcPhoto) {
-            
-            res.render("index",{    
-                user : req.session.user,
-                // src : showImgData.image
-                src : srcPhoto
-            })       
-        }
+    if (srcPhoto) {
+
+        res.render("index", {
+            user: req.session.user,
+            // src : showImgData.image
+            src: srcPhoto
+        })
+    }
     //     const showImgData = await UserCred.findOne({username : req.session.user})
     // }
-    else{
-        res.render("index",{    
-            user : req.session.user,
-            src : "default.png"
-        }) 
+    else {
+        res.render("index", {
+            user: req.session.user,
+            src: "default.png"
+        })
     }
-    
+
 
 
 
 })
-app.get("/register", (req,res) => {
+app.get("/register", (req, res) => {
     res.render("register");
 })
 
-app.post("/register", upload ,async (req,res) => {
+app.post("/register", upload, async (req, res) => {
     const pass = req.body.password;
     const confirmpass = req.body.confirmpassword;
     const userName = req.body.username;
-    const ifUser = await UserCred.findOne({username : userName})
-    if(!ifUser){
+    const ifUser = await UserCred.findOne({ username: userName })
+    if (!ifUser) {
         if (pass === confirmpass) {
             if (req.file) {
                 const userDataifimg = new UserCred({
-                    username : req.body.username,
-                    password : pass,
-                    image: req.file.filename 
+                    username: req.body.username,
+                    password: pass,
+                    image: req.file.filename
                 })
                 await userDataifimg.save();
             }
-            else{
+            else {
                 const userDataifnotimg = new UserCred({
-                    username : req.body.username,
-                    password : pass
+                    username: req.body.username,
+                    password: pass
                 })
                 await userDataifnotimg.save();
             }
-            
-            res.render("register",{
-                success : "Account Created Successfully"
+
+            res.render("register", {
+                success: "Account Created Successfully"
             });
         }
     }
-    else{
-        res.render("register",{
+    else {
+        res.render("register", {
             // data : "User Already Existed"
-            data : "User Already Existed"
+            data: "User Already Existed"
         })
     }
-    
+
 })
 
-app.post("/login", async (req,res) => {
+app.post("/login", async (req, res) => {
     try {
         const userName = req.body.username;
         const pass = req.body.password;
-        const data = await UserCred.findOne({username : userName});
+        const data = await UserCred.findOne({ username: userName });
         const token = await data.generateAuthToken();
-        
+
 
         if (pass === data.password) {
-            res.cookie("jwt",token,{
+            res.cookie("jwt", token, {
                 expires: new Date(Date.now() + 9999999),
-                httpOnly : true,
+                httpOnly: true,
             });
             req.session.user = userName;
-            const showImgData = await UserCred.findOne({username : userName})
+            const showImgData = await UserCred.findOne({ username: userName })
             srcPhoto = showImgData.image;
             res.redirect('/');
         }
-        else{
-            res.render("register",{
-                wronguser : "Invalid Username/Password"
+        else {
+            res.render("register", {
+                wronguser: "Invalid Username/Password"
             })
         }
-        
+
     } catch (error) {
-        res.render("register",{
-            wronguser : "Invalid Username/Password"
+        res.render("register", {
+            wronguser: "Invalid Username/Password"
         })
     }
-    
+
 })
 
-app.get("/user_dashboard", auth, async(req,res) => {
-   var data1 = [];
+app.get("/user_dashboard", auth, async (req, res) => {
+    var data1 = [];
     const alluserData = await UserCred.find({});
     var saathiArr = [];
-    for(var ele of alluserData){
-        for(var ak of ele.trips){
-            if(ak.saathi.includes(req.session.user)){
+    for (var ele of alluserData) {
+        for (var ak of ele.trips) {
+            if (ak.saathi.includes(req.session.user)) {
                 if (data1.indexOf(ele) === -1) {
                     data1.push(ak.name)
                 }
                 saathiArr.push({
-                    tripname : ak.name,
-                    saathi : ak.saathi
+                    tripname: ak.name,
+                    saathi: ak.saathi
                 })
-                
+
             }
-        } 
+        }
     }
-    
-    res.render("user_dashboard",{
-        data : data1,
-        allusers : alluserData,
-        user : req.session.user,
-        src : srcPhoto,
+
+    res.render("user_dashboard", {
+        data: data1,
+        allusers: alluserData,
+        user: req.session.user,
+        src: srcPhoto,
         saathiArr
     })
 })
 
-app.post("/user_dashboard", auth, async(req,res) => {
+app.post("/user_dashboard", auth, async (req, res) => {
     await UserCred.updateOne({
-        username : req.session.user
-    },{
-        $push : {
-            trips : {
-                name : req.body.nameTrip,
-                saathi : req.body.userSelect
+        username: req.session.user
+    }, {
+        $push: {
+            trips: {
+                name: req.body.nameTrip,
+                saathi: req.body.userSelect
             }
         }
     })
@@ -239,19 +239,19 @@ app.post("/user_dashboard", auth, async(req,res) => {
 
 
 
-app.post("/update/:trip" , auth, async(req,res) => {
+app.post("/update/:trip", auth, async (req, res) => {
 
     const uu = await UserCred.findOne({
-        'trips.name' : req.params.trip
-    }).select({'trips':1})
+        'trips.name': req.params.trip
+    }).select({ 'trips': 1 })
     uu.trips[0].name = req.body.nameTrip
     uu.trips[0].saathi = req.body.userSelect
 
     await UserCred.updateOne({
-        'trips.name' : req.params.trip
-    },{
-        $set : {
-            'trips' : uu.trips
+        'trips.name': req.params.trip
+    }, {
+        $set: {
+            'trips': uu.trips
 
         }
     })
@@ -261,20 +261,20 @@ app.post("/update/:trip" , auth, async(req,res) => {
 })
 
 
-app.post("/delete/:trip",auth ,async(req,res) => {
+app.post("/delete/:trip", auth, async (req, res) => {
 
     await UserCred.updateOne({
-        'trips.name' : req.params.trip
-        
-     },{
-        $pull : {
-            trips : {
-                name : req.params.trip
-            } 
-        }
-     })
+        'trips.name': req.params.trip
 
-     res.redirect("/user_dashboard");
+    }, {
+        $pull: {
+            trips: {
+                name: req.params.trip
+            }
+        }
+    })
+
+    res.redirect("/user_dashboard");
 })
 
 
@@ -282,18 +282,18 @@ app.post("/delete/:trip",auth ,async(req,res) => {
 
 
 
-app.get("/mytrips/:tripname",auth, async(req,res) => {
+app.get("/mytrips/:tripname", auth, async (req, res) => {
 
-    const pollData = await UserCred.find().select({polls : 1})
+    const pollData = await UserCred.find().select({ polls: 1 })
 
 
     const dateData = await UserCred.find({
-        'trips.name' : req.params.tripname
-    }).select({'trips' : 1})
+        'trips.name': req.params.tripname
+    }).select({ 'trips': 1 })
     console.log(JSON.stringify(dateData));
     var durationArr = [];
 
-    for(var ele of dateData[0].trips){
+    for (var ele of dateData[0].trips) {
         if (ele.name == req.params.tripname) {
             durationArr = ele.duration;
         }
@@ -312,83 +312,85 @@ app.get("/mytrips/:tripname",auth, async(req,res) => {
     var pollArray = [];
     var optionArr = [];
     var isShow = true;
-    for(var ele of pollData){
-       for(var polele of ele.polls){
+    for (var ele of pollData) {
+        for (var polele of ele.polls) {
             if (polele.tripname == req.params.tripname) {
                 if (polele.member.includes(`${req.session.user}`)) {
                     isShow = false
                 }
                 optionArr.push(isShow);
 
-                if(!pollArray.some(pollArray => pollArray.title === polele.title)){
-                    pollArray.push(polele); 
-                } 
+                if (!pollArray.some(pollArray => pollArray.title === polele.title)) {
+                    pollArray.push(polele);
+                }
             }
-            
+
             isShow = true;
-       }
-    }   
+        }
+    }
     res.render("polls", {
-        submit : optionArr,
-        trip : req.params.tripname,
-        polldata : pollArray,
-        duration : durationArr,
-        user : req.session.user,
-        src : srcPhoto,
+        submit: optionArr,
+        trip: req.params.tripname,
+        polldata: pollArray,
+        duration: durationArr,
+        user: req.session.user,
+        src: srcPhoto,
 
     })
     pollArray = []
-    
+
 })
 
-app.post("/mytrips/:tripname",async (req,res) => {
+app.post("/mytrips/:tripname", async (req, res) => {
 
-        
-        if (req.body.fromDate) {
-            const dateTitle = req.body.questionTitle
-            const fromDate = req.body.fromDate;
-            const toDate = req.body.toDate;
-            const durArr = []
-            durArr.push(dateTitle);
-            durArr.push(fromDate);
-            durArr.push(toDate);
-            await UserCred.updateOne(
-                {
-                    //username : req.session.user,
-                    'trips.name' : req.params.tripname
-                },
-                { "$set": {
-                    'trips.$.duration' : durArr
-                }}
-            )
 
-        }
-        else{
-            var optionArray = req.body.optionInput;
+    if (req.body.fromDate) {
+        const dateTitle = req.body.questionTitle
+        const fromDate = req.body.fromDate;
+        const toDate = req.body.toDate;
+        const durArr = []
+        durArr.push(dateTitle);
+        durArr.push(fromDate);
+        durArr.push(toDate);
+        await UserCred.updateOne(
+            {
+                //username : req.session.user,
+                'trips.name': req.params.tripname
+            },
+            {
+                "$set": {
+                    'trips.$.duration': durArr
+                }
+            }
+        )
+
+    }
+    else {
+        var optionArray = req.body.optionInput;
         var final = [];
         optionArray.forEach((ele) => {
             final.push({
-                name : ele,
-                weight : 0
+                name: ele,
+                weight: 0
             })
-        }) 
+        })
         await UserCred.updateOne(
-            {username : req.session.user},
+            { username: req.session.user },
             {
-                $push : {
-                    polls : {
-                        tripname : req.params.tripname,
-                        title : req.body.questionTitle,
-                        options : final
+                $push: {
+                    polls: {
+                        tripname: req.params.tripname,
+                        title: req.body.questionTitle,
+                        options: final
                     }
                 }
-                
+
             }
         )
-        }
-        
- 
-        // res.redirect("/");
+    }
+
+
+    // res.redirect("/");
     res.redirect(`/mytrips/${req.params.tripname}`)
 })
 
@@ -408,54 +410,54 @@ app.post("/mytrips/:tripname",async (req,res) => {
 
 
 
-app.get("/responsibility/:trip", auth,async(req,res) => {
+app.get("/responsibility/:trip", auth, async (req, res) => {
     const respData = await UserCred.find({
-        'resp.tripname' : req.params.trip
+        'resp.tripname': req.params.trip
 
-    }).select({resp : 1})
+    }).select({ resp: 1 })
 
-console.log(JSON.stringify(respData));
+    console.log(JSON.stringify(respData));
     var respShowData = []
     const alluserData = await UserCred.find({});
 
     if (respData.length > 0) {
-        for(var ele of respData[0].resp){
+        for (var ele of respData[0].resp) {
             if (ele.tripname == req.params.trip) {
                 respShowData.push(ele)
             }
 
         }
 
-        res.render("resp",{
-            tripname : req.params.trip,
-            allusers : alluserData,
+        res.render("resp", {
+            tripname: req.params.trip,
+            allusers: alluserData,
             // respData : respData[0].resp,
-            respData : respShowData, 
-            user : req.session.user,
-            src : srcPhoto,
+            respData: respShowData,
+            user: req.session.user,
+            src: srcPhoto,
         })
     }
-    else{
-        res.render("resp",{
-            tripname : req.params.trip,
-            allusers : alluserData,
-            user : req.session.user,
-            src : srcPhoto,
+    else {
+        res.render("resp", {
+            tripname: req.params.trip,
+            allusers: alluserData,
+            user: req.session.user,
+            src: srcPhoto,
         })
     }
-    
+
 })
 
-app.post("/responsibility/:trip/:respo/:index", auth,async(req,res) => {
+app.post("/responsibility/:trip/:respo/:index", auth, async (req, res) => {
     await UserCred.updateOne({
-        'resp.tripname' : req.params.trip,
-        'resp.respo' : req.params.respo
-    },{
-        $set : {
-            [`resp.${req.params.index}`] : {
-                tripname : req.params.trip,
-                respo : req.body.respInput,
-                user : req.body.userSelect
+        'resp.tripname': req.params.trip,
+        'resp.respo': req.params.respo
+    }, {
+        $set: {
+            [`resp.${req.params.index}`]: {
+                tripname: req.params.trip,
+                respo: req.body.respInput,
+                user: req.body.userSelect
             }
         }
     })
@@ -464,17 +466,17 @@ app.post("/responsibility/:trip/:respo/:index", auth,async(req,res) => {
     // respInput
 })
 
-app.post("/responsibility/delete/:trip/:respo/:index", auth,async(req,res) => {
+app.post("/responsibility/delete/:trip/:respo/:index", auth, async (req, res) => {
     await UserCred.updateOne({
 
-        'resp.tripname' : req.params.trip,
-        'resp.respo' : req.params.respo
-        
-     },{
-        $pull : {
-            resp : {
-                tripname : req.params.trip,
-                respo : req.params.respo
+        'resp.tripname': req.params.trip,
+        'resp.respo': req.params.respo
+
+    }, {
+        $pull: {
+            resp: {
+                tripname: req.params.trip,
+                respo: req.params.respo
             }
         }
     })
@@ -485,22 +487,22 @@ app.post("/responsibility/delete/:trip/:respo/:index", auth,async(req,res) => {
 
 
 
-app.post("/responsibility/:trip", auth,async(req,res) => {
+app.post("/responsibility/:trip", auth, async (req, res) => {
     await UserCred.updateOne({
-        'trips.name' : req.params.trip
-    },{
-        $push : {
-            resp : {
-                tripname : req.params.trip,
-                respo : req.body.respInput,
-                user : req.body.userSelect
+        'trips.name': req.params.trip
+    }, {
+        $push: {
+            resp: {
+                tripname: req.params.trip,
+                respo: req.body.respInput,
+                user: req.body.userSelect
             }
         }
     })
 
     res.redirect(`/responsibility/${req.params.trip}`)
-//taskInput
-//userSelect
+    //taskInput
+    //userSelect
 })
 
 
@@ -524,7 +526,7 @@ app.post("/responsibility/:trip", auth,async(req,res) => {
 
 
 
-app.get("/logout", (req,res) => {
+app.get("/logout", (req, res) => {
     res.clearCookie("jwt");
     res.redirect("/register")
 })
@@ -539,43 +541,43 @@ app.get("/logout", (req,res) => {
 
 
 
-app.get("/:user",auth,async (req,res) => {
+app.get("/:user", auth, async (req, res) => {
 
     if (req.params.user === req.session.user) {
-        const loginUserData = await UserCred.findOne({username : req.params.user})
+        const loginUserData = await UserCred.findOne({ username: req.params.user })
         srcPhoto = loginUserData.image;
-            res.render("userProfile",{
-            data : loginUserData,
-            user : req.session.user,
-            src : loginUserData.image,
+        res.render("userProfile", {
+            data: loginUserData,
+            user: req.session.user,
+            src: loginUserData.image,
         })
     }
-    else{
+    else {
         res.status(404).render("404")
 
     }
-    
+
 })
 
 
 
-app.post("/:img/:name", upload,async(req,res) => {
+app.post("/:img/:name", upload, async (req, res) => {
 
-        if (req.file) {
-            await UserCred.updateOne({
-                username : req.params.name,
-                image : req.params.img
-            },{
-                image : req.file.filename
-            })
-            
-            
-        }
+    if (req.file) {
+        await UserCred.updateOne({
+            username: req.params.name,
+            image: req.params.img
+        }, {
+            image: req.file.filename
+        })
 
-          
-            
-            res.redirect(`/${req.params.name}`);
-        
+
+    }
+
+
+
+    res.redirect(`/${req.params.name}`);
+
 })
 
 
@@ -606,38 +608,38 @@ app.post("/:img/:name", upload,async(req,res) => {
 
 
 
-app.post("/delete/poll/:trip/:pollTitle",auth ,async(req,res) => {
+app.post("/delete/poll/:trip/:pollTitle", auth, async (req, res) => {
 
     await UserCred.updateOne({
-        'polls.tripname' : req.params.trip,
-        'polls.title' : req.params.pollTitle
-        
-     },{
-        $pull : {
-            polls : {
-                tripname : req.params.trip,
-                title : req.params.pollTitle
-            } 
-        }
-     })
+        'polls.tripname': req.params.trip,
+        'polls.title': req.params.pollTitle
 
-     res.redirect(`/mytrips/${req.params.trip}`);
+    }, {
+        $pull: {
+            polls: {
+                tripname: req.params.trip,
+                title: req.params.pollTitle
+            }
+        }
+    })
+
+    res.redirect(`/mytrips/${req.params.trip}`);
 })
 
 
 
-app.post("/updateTask/:trip/:day/:task/:index",auth ,async(req,res) => {
+app.post("/updateTask/:trip/:day/:task/:index", auth, async (req, res) => {
 
     await UserCred.updateOne({
 
         // $and : [{'schedule.trip' : req.params.trip},{'schedule.day' : req.params.day},{'schedule.task' : {$in : [req.params.task]}}]
-        'schedule.trip' : req.params.trip,
-        'schedule.day' : req.params.day,
-        'schedule.task' : {$in : [req.params.task]}
-        
-     },{
-        $set : {
-            [`schedule.${req.params.day-1}.task.${req.params.index}`]: req.body.taskInput
+        'schedule.trip': req.params.trip,
+        'schedule.day': req.params.day,
+        'schedule.task': { $in: [req.params.task] }
+
+    }, {
+        $set: {
+            [`schedule.${req.params.day - 1}.task.${req.params.index}`]: req.body.taskInput
         }
     })
     console.log(req.body.taskInput);
@@ -660,15 +662,15 @@ app.post("/updateTask/:trip/:day/:task/:index",auth ,async(req,res) => {
 
 
 
-app.post("/deleteTask/:trip/:day/:task",auth ,async(req,res) => {
+app.post("/deleteTask/:trip/:day/:task", auth, async (req, res) => {
 
     await UserCred.updateOne({
 
-        $and : [{'schedule.trip' : req.params.trip},{'schedule.day' : req.params.day}]
-        
-     },{
-        $pull : {
-            [`schedule.${req.params.day-1}.task`]: req.params.task
+        $and: [{ 'schedule.trip': req.params.trip }, { 'schedule.day': req.params.day }]
+
+    }, {
+        $pull: {
+            [`schedule.${req.params.day - 1}.task`]: req.params.task
         }
     })
 
@@ -693,42 +695,42 @@ app.post("/deleteTask/:trip/:day/:task",auth ,async(req,res) => {
 
 
 
-app.post("/mytrips/update/:tripname",async (req,res) =>{
-    const pollData = await UserCred.find().select({polls : 1})
+app.post("/mytrips/update/:tripname", async (req, res) => {
+    const pollData = await UserCred.find().select({ polls: 1 })
     var pollArr = []
     // console.log(JSON.stringify(req.body));
-    for(var ele of pollData){
+    for (var ele of pollData) {
 
-        for(var polele of ele.polls){
+        for (var polele of ele.polls) {
 
-                if (polele.tripname == req.body.tripname) {
+            if (polele.tripname == req.body.tripname) {
 
-                    if (polele.title == `${req.body.title}`) { 
-                        var optionId = req.body.title;
-                        var optionObj = polele.options[req.body[`${optionId}`]];
-                        optionObj.weight += 1;
-                        polele.member.push(req.session.user)
+                if (polele.title == `${req.body.title}`) {
+                    var optionId = req.body.title;
+                    var optionObj = polele.options[req.body[`${optionId}`]];
+                    optionObj.weight += 1;
+                    polele.member.push(req.session.user)
 
-                        
-                    }
+
                 }
-                pollArr.push(polele)
-                
+            }
+            pollArr.push(polele)
+
         }
     }
     await UserCred.updateOne({
-        "polls.tripname" : req.body.tripname
-    },{
-        polls : pollArr
+        "polls.tripname": req.body.tripname
+    }, {
+        polls: pollArr
     })
-       
+
     pollArr = []
     res.redirect(`/mytrips/${req.params.tripname}`)
-//     res.redirect('/')
-//     res.render("polls", {
-//         trip : req.params.tripname,
-//         polldata : pollArr
-//    })
+    //     res.redirect('/')
+    //     res.render("polls", {
+    //         trip : req.params.tripname,
+    //         polldata : pollArr
+    //    })
 })
 
 
@@ -741,125 +743,125 @@ app.post("/mytrips/update/:tripname",async (req,res) =>{
 
 
 
-app.get("/:trip/screen",auth,async (req,res) => {
+app.get("/:trip/screen", auth, async (req, res) => {
     const screenData = await UserCred.find({
-        "polls.tripname" : req.params.trip 
-    }).select({polls:1})
-    
+        "polls.tripname": req.params.trip
+    }).select({ polls: 1 })
 
-     
+
+
     const dateData = await UserCred.find({
-        'trips.name' : req.params.trip
-    }).select({'trips' : 1})
+        'trips.name': req.params.trip
+    }).select({ 'trips': 1 })
     var durationArr = [];
 
-    for(var ele of dateData[0].trips){
+    for (var ele of dateData[0].trips) {
         if (ele.name == req.params.trip) {
             durationArr = ele.duration;
         }
     }
-        var screenDate = [];
-        // var durationArr = dateData[0].trips[0].duration;
-        // console.log(JSON.stringify(durationArr));
+    var screenDate = [];
+    // var durationArr = dateData[0].trips[0].duration;
+    // console.log(JSON.stringify(durationArr));
 
-        if (durationArr.length > 0) {
-        
-            const dateTitle = durationArr[0];
-            const fromDate = new Date(durationArr[1]).toDateString();
-            const toDate = new Date(durationArr[2]).toDateString();
-        
-            const noOfDays = ((new Date(durationArr[2]).getTime()) - (new Date(durationArr[1]).getTime()))/(86400000) + 1;
-        
-            const startTripDate = new Date(durationArr[1]);
-            var nextDay = new Date(startTripDate);
-        
-        
-        
-        
-            var scheduleArr = []
-            for (let i = 1; i <= noOfDays ; i++) {
-        
-                const taskArr = await UserCred.find({
-                    'schedule.trip' : req.params.trip,
-                    'schedule.day' : i
-                }).select({'schedule.$': 1})
-                    scheduleArr.push({
-                        trip : req.params.trip,
-                        day : i,
-                        date : nextDay.toDateString(),
-                        task : (typeof taskArr[0] === 'undefined') ? [] : taskArr[0].schedule[0].task
-                    })
-        
-        
-        
-        
-                nextDay.setDate(nextDay.getDate() + 1);
-                
-            }
-        
-            
-        
-        
-        
-            await UserCred.updateOne(
-                {'trips.name' : req.params.trip},
-                {
-                    $set : {
-                        schedule : scheduleArr
-                    }
-                    
+    if (durationArr.length > 0) {
+
+        const dateTitle = durationArr[0];
+        const fromDate = new Date(durationArr[1]).toDateString();
+        const toDate = new Date(durationArr[2]).toDateString();
+
+        const noOfDays = ((new Date(durationArr[2]).getTime()) - (new Date(durationArr[1]).getTime())) / (86400000) + 1;
+
+        const startTripDate = new Date(durationArr[1]);
+        var nextDay = new Date(startTripDate);
+
+
+
+
+        var scheduleArr = []
+        for (let i = 1; i <= noOfDays; i++) {
+
+            const taskArr = await UserCred.find({
+                'schedule.trip': req.params.trip,
+                'schedule.day': i
+            }).select({ 'schedule.$': 1 })
+            scheduleArr.push({
+                trip: req.params.trip,
+                day: i,
+                date: nextDay.toDateString(),
+                task: (typeof taskArr[0] === 'undefined') ? [] : taskArr[0].schedule[0].task
+            })
+
+
+
+
+            nextDay.setDate(nextDay.getDate() + 1);
+
+        }
+
+
+
+
+
+        await UserCred.updateOne(
+            { 'trips.name': req.params.trip },
+            {
+                $set: {
+                    schedule: scheduleArr
                 }
-            )
-        
-        
-            if(!(screenDate.length > 0)){
-                screenDate.push(dateTitle,fromDate,toDate);
-            } 
+
+            }
+        )
+
+
+        if (!(screenDate.length > 0)) {
+            screenDate.push(dateTitle, fromDate, toDate);
+        }
     }
-        
-        var screenObj = []
+
+    var screenObj = []
     if (screenData.length > 0) {
 
-        for(var ele of screenData[0].polls){
+        for (var ele of screenData[0].polls) {
             if (ele.tripname == req.params.trip) {
                 var optionTitle;
                 var winnerOptionName;
                 var winnerOptionWeight = 0;
-                for(var optionele of ele.options){
-                    
+                for (var optionele of ele.options) {
+
                     if (optionele.weight > winnerOptionWeight) {
                         winnerOptionWeight = optionele.weight;
                         winnerOptionName = optionele.name
                         optionTitle = ele.title
                     }
-                    
+
                 }
                 if ((winnerOptionName !== undefined)) {
-                    
-                    if(!screenObj.some(screenObj => screenObj.title === optionTitle)){
+
+                    if (!screenObj.some(screenObj => screenObj.title === optionTitle)) {
                         screenObj.push({
-                            title : optionTitle,
-                            name : winnerOptionName,
-                            weight : winnerOptionWeight
+                            title: optionTitle,
+                            name: winnerOptionName,
+                            weight: winnerOptionWeight
                         })
-                    } 
-    
-                    
+                    }
+
+
                 }
-            }   
+            }
         }
-    
+
         // const alluserData = await UserCred.find({});
         // const scheduleArr = await UserCred.find({
-    
+
         // })
-        res.render("itineraryScreen",{
-            data : screenObj,
-            screenDate : screenDate,
-            scheduleArr : scheduleArr,
-            tripname : req.params.trip,
-            user : req.session.user,
-            src : srcPhoto,
+        res.render("itineraryScreen", {
+            data: screenObj,
+            screenDate: screenDate,
+            scheduleArr: scheduleArr,
+            tripname: req.params.trip,
+            user: req.session.user,
+            src: srcPhoto,
         });
 
 
@@ -872,23 +874,23 @@ app.get("/:trip/screen",auth,async (req,res) => {
 
 
     }
-    else{
-        res.render("itineraryScreen",{
-            screenDate : screenDate,
-            scheduleArr : scheduleArr,
-            tripname : req.params.trip,
-            user : req.session.user,
-            src : srcPhoto,
+    else {
+        res.render("itineraryScreen", {
+            screenDate: screenDate,
+            scheduleArr: scheduleArr,
+            tripname: req.params.trip,
+            user: req.session.user,
+            src: srcPhoto,
         });
 
     }
 
-    
+
 
 })
 
 
-app.post("/:tripname/update/:day/screen", async(req,res) => {
+app.post("/:tripname/update/:day/screen", async (req, res) => {
     // req.body.taskInput
     // const schData = await UserCred.find({
     //     'schedule.day' : req.params.day,
@@ -900,29 +902,29 @@ app.post("/:tripname/update/:day/screen", async(req,res) => {
     //         if (ele.day == req.params.day) {
     //             ele.task.push(req.body.taskInput)
     //         }
-            
+
     //         // }
     //     }
 
     // for(var ele of schData[0].schedule){
-        // const data = await UserCred.findOne({
-        //     'schedule.trip' : req.params.tripname,
-        //     'schedule.day' : 1
-        // }).select({'schedule.$' : 1})
-        
-        await UserCred.updateOne({
+    // const data = await UserCred.findOne({
+    //     'schedule.trip' : req.params.tripname,
+    //     'schedule.day' : 1
+    // }).select({'schedule.$' : 1})
 
-            "schedule" : { "$elemMatch": { "trip": req.params.tripname, "day": req.params.day }}
-            },{
-                // $push : {
-                //     'schedule.$.task' : "Hello"
-                // }
-                $push: {'schedule.$.task' : req.body.taskInput}
-            })
-            
-       
+    await UserCred.updateOne({
+
+        "schedule": { "$elemMatch": { "trip": req.params.tripname, "day": req.params.day } }
+    }, {
+        // $push : {
+        //     'schedule.$.task' : "Hello"
+        // }
+        $push: { 'schedule.$.task': req.body.taskInput }
+    })
+
+
     // }
-        
+
 
     // await UserCred.updateOne({
     //     'schedule.trip' : req.params.tripname
@@ -937,16 +939,16 @@ app.post("/:tripname/update/:day/screen", async(req,res) => {
 
 
 
-app.get('*' , auth , (req,res) => {
+app.get('*', auth, (req, res) => {
     res.status(404).render("404", {
-        user : req.session.user,
-        src : srcPhoto,
+        user: req.session.user,
+        src: srcPhoto,
     })
 })
 
 db.connectDb().then(() => {
 
-    app.listen(port,(req,res)=>{
+    app.listen(port, (req, res) => {
         console.log("Server Created")
     })
 })
